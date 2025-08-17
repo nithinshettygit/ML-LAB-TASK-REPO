@@ -1,0 +1,131 @@
+Perfect ✅ Let’s re-ground ourselves in the **AIRA Project Roadmap**.
+Here’s a **step-by-step plan with breakdowns** of everything we need to complete for AIRA (AI-Teacher Agent with Figures, Memory, and Interactivity):
+
+---
+
+# 🚀 AIRA Project Core Plan & Steps
+
+### **1. Input Knowledge Base Preparation**
+
+* **Files we have:**
+
+  * `knowledgebase.json` → extracted textbook (chapter → subchapter → chunks).
+  * `chapter_figure.json` → chapterwise figure details (figure name + path).
+* **Tasks:**
+
+  * Ensure both JSONs are clean and consistent.
+  * Add `chunk_uuid` to each content chunk for traceability.
+  * Link figures correctly to subchapters.
+
+---
+
+### **2. Embedding + Vector Store Setup (FAISS)**
+
+* **Goal:** Store all chunks in FAISS with embeddings for retrieval.
+* **Steps:**
+
+  1. Write `build_vectorstore_faiss.py`:
+
+     * Load `merged_chunks_with_figures.json`. and used subchapter_metadata.json
+     * Split into chunks (with metadata: chapter, subchapter, figures).
+     * Generate embeddings (`HuggingFaceBgeEmbeddings`).
+     * Store in FAISS index (`faiss_index`).
+  2. Write `debug_vectorstore_faiss.py`:
+
+     * Load FAISS index.
+     * Run test queries.
+     * Print retrieved chunks + figure info.
+
+---
+
+### **3. Retrieval-Augmented Generation (RAG) Pipeline**
+
+* **Goal:** Take a user/topic query → retrieve top chunks + figure info → feed togemini model) → generate lesson.
+* **Steps:**
+
+  * `rag_pipeline.py`:
+
+    * Input: topic/subchapter name.
+    * Retrieval: top-k FAISS chunks.
+    * LLM Prompt: combine text + figure hints.
+    * Output: lesson text (Markdown/HTML).
+
+---
+
+### **4. Lesson Generation Structure**
+
+* **Requirements:**
+
+  * Intro → story/meme (not video).
+  * Explanation with examples.
+  * Embed **figures** (from `chapter_figure.json`).
+  * Key takeaways.
+  * Summary at end.
+* **Plan:**
+
+  * Prompt templates with placeholders `{retrieved_content}`, `{figures}`.
+  * Post-processing → inject `<img src="...">` for figure references.
+
+---
+
+### **5. Agent Capabilities (Interactive AIRA Agent)**
+
+* **Core features:**
+
+  * Continuous **lesson narration** (like a teacher).
+  * **Pause/resume** (spacebar or `q` for question).
+  * Handles student **questions** mid-lesson → queries FAISS + LLM → answers.
+  * Then **resume lesson** from paused point.
+* **Implementation:**
+
+  * Use **LangGraph** to model flow: `Lesson → Interrupt → Q&A → Resume`.
+  * Add **time-travel checkpoints** (lesson explanation, analogy, summary).
+
+---
+
+### **6. Memory & Personalization**
+
+* **Goal:** Adapt lessons per student (preferences, progress).
+* **Plan:**
+
+  * Use **LangGraph Long-Term Memory** with:
+
+    * `namespace = student_id`
+    * `key = "profile" / "progress" / "preferences"`
+    * `value = structured JSON`
+  * Store:
+
+    * Completed lessons, misconceptions, style preference (stories, examples).
+  * On next session → fetch from memory → personalize lesson.
+
+---
+
+### **7. Frontend / Delivery (Phase 2)**
+
+* **Options:**
+
+  * /FastAPI Web App.
+  * HTML lesson rendering (text + figures + YouTube videos).
+  * Voice narration (TTS) later.
+* **Flow:**
+
+  * Student selects topic.
+  * Agent delivers interactive lesson.
+  * Figures auto-loaded from local folder.
+
+---
+
+# 📌 Final Breakdown (Execution Order)
+
+1. ✅ **Knowledgebase + Figures JSON** (done, just refine if needed).
+2. 🔄 **Build & debug FAISS index** (currently in progress).
+3. 🛠 **RAG pipeline** for retrieval + lesson generation.
+4. 🎨 **Lesson structuring with figures, story, key takeaways.**
+5. 🤖 **Agent with LangGraph** (pause/resume + Q\&A).
+6. 🧠 **Memory system for personalization.**
+7. 🌐 **Frontend (FastAPI app with HTML rendering).**
+
+---
+
+👉 This is our **master plan** for AIRA.
+Do you want me to now **map each step into concrete scripts** (like: `build_vectorstore_faiss.py`, `rag_pipeline.py`, `aira_agent.py`) so you’ll have a **file-wise breakdown**?
