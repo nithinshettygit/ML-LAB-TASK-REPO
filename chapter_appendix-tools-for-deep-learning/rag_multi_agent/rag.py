@@ -148,8 +148,12 @@ def generate_lesson(query: str, top_k: int = TOP_K):
 
     # Build figures string
     figures_str = ""
-    for fig in figures_list:
-        figures_str += f"<img src='[image_url_placeholder]' alt='{fig['figure']}' />\n**Description:** {fig['desc']}\n\n"
+    for f in figures_list:
+        figure_name = f["figure"]
+        desc = f["desc"]
+        # Map figure name to local path
+        figure_path = f"data/{figure_name.replace(' ', '_').lower()}"
+        figures_str += f"<img src='{figure_path}' alt='{figure_name}' />\n**Description:** {desc}\n"
 
     if figure_explanations:
         figures_str += figure_explanations + "\n"
